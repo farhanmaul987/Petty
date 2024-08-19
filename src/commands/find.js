@@ -9,7 +9,8 @@ const {
 
 const { stripIndents } = require("common-tags");
 const manhwa_data = require('../data/manhwa_mal.json');
-const { getRecommendations } = require('../algorithm/tfidf_cosine');
+const { getCosine } = require('../algorithm/tfidf_cosine');
+const { getEuclidean } = require('../algorithm/euclidean');
 
 module.exports = {
     name: "find",
@@ -25,7 +26,10 @@ module.exports = {
     // deleted: true,
 
     callback: async (client, interaction) => {
+        // try {
+        //     console.log("Received find command from user:", interaction.user.tag);
         const getTitle = interaction.options.getString("title");
+        // console.log("Searching for title:", getTitle);
         const manhwa = manhwa_data.find((m) => {
             const mTitle =
                 typeof m.title === "string"
@@ -37,16 +41,17 @@ module.exports = {
         if (!manhwa) {
             const notFound = new EmbedBuilder().setColor("#5500FF")
                 .setDescription(stripIndents`
-                Manhwa **${getTitle}** tidak ditemukan.
-                Ketik \`/add_manhwa\` untuk memberi masukan judul ke admin.
-                `);
+            Manhwa *${getTitle}* tidak ditemukan.
+            Data berdasarkan myanimelist awal tahun 2023.
+            Judul bisa saja berbeda dengan yang biasa didengar.
+            `);
             return interaction.reply({ embeds: [notFound] });
         }
 
-        // Mendapatkan rekomendasi dari tfidf_cosine.js
-        const recommendations = getRecommendations(getTitle);
+        const cosine = getCosine(getTitle);
+        const euclidean = getEuclidean(getTitle);
 
-        if (!recommendations || recommendations.length === 0) {
+        if ((!cosine || cosine.length === 0) && (!euclidean || euclidean.length === 0)) {
             const noRecommendations = new EmbedBuilder().setColor("#5500FF")
                 .setDescription(stripIndents`
                 Tidak ada rekomendasi ditemukan untuk **${getTitle}**.
@@ -65,17 +70,23 @@ module.exports = {
             - ${manhwa.authors}
             `);
 
-        const results = recommendations.map(rec => ({
+        const cosineResults = cosine.map(rec => ({
             label: rec.title,
             description: `Similarity: ${rec.similarity}`,
-            value: rec.title,
+            value: `cosine_${rec.title}`,
         }));
 
-        const selectMenu = new StringSelectMenuBuilder()
-            .setCustomId(interaction.id)
-            .setPlaceholder("Pilih untuk informasi lebih lanjut")
+        const euclideanResults = euclidean.map(rec => ({
+            label: rec.title,
+            description: `Distance: ${rec.distance}`,
+            value: `euclidean_${rec.title}`,
+        }));
+
+        const cosineMenu = new StringSelectMenuBuilder()
+            .setCustomId(`${interaction.id}_cosine`)
+            .setPlaceholder("Pilih rekomendasi (Cosine Similarity)")
             .addOptions(
-                results.map(result =>
+                cosineResults.map(result =>
                     new StringSelectMenuOptionBuilder()
                         .setLabel(result.label)
                         .setDescription(result.description)
@@ -83,18 +94,37 @@ module.exports = {
                 )
             );
 
-        const row = new ActionRowBuilder().addComponents(selectMenu);
+        const euclideanMenu = new StringSelectMenuBuilder()
+            .setCustomId(`${interaction.id}_euclidean`)
+            .setPlaceholder("Pilih rekomendasi (Euclidean Distance)")
+            .addOptions(
+                euclideanResults.map(result =>
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel(result.label)
+                        .setDescription(result.description)
+                        .setValue(result.value)
+                )
+            );
 
-        const reply = await interaction.reply({ embeds: [embed], components: [row] });
+        const row = new ActionRowBuilder().addComponents(cosineMenu);
+        const row2 = new ActionRowBuilder().addComponents(euclideanMenu);
+
+        const reply = await interaction.reply({ embeds: [embed], components: [row, row2] });
 
         const collector = reply.createMessageComponentCollector({
             componentType: ComponentType.StringSelect,
-            filter: (i) => i.user.id === interaction.user.id && i.customId === interaction.id,
-            time: 60_000,
+            filter: (i) => i.user.id === interaction.user.id,
+            time: 180000,
         });
 
         collector.on('collect', async (i) => {
-            const selectedTitle = i.values[0];
+            let selectedTitle = "";
+            if (i.customId.endsWith('_cosine')) {
+                selectedTitle = i.values[0].replace('cosine_', '');
+            } else if (i.customId.endsWith('_euclidean')) {
+                selectedTitle = i.values[0].replace('euclidean_', '');
+            }
+
             const selectedManhwa = manhwa_data.find(m => m.title === selectedTitle);
 
             if (selectedManhwa) {
@@ -114,5 +144,10 @@ module.exports = {
                 await i.reply({ content: 'Informasi manhwa tidak ditemukan.', ephemeral: true });
             }
         });
-    },
+        // } catch (error) {
+        //     console.error("Error in find command:", error);
+        //     await interaction.reply({ content: 'There was an error processing your request.', ephemeral: true });
+        // }
+    }
+
 };

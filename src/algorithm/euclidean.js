@@ -57,16 +57,14 @@ const computeTFIDF = (tf, idf) => {
     return tfidf;
 };
 
-// Fungsi untuk menghitung cosine similarity
-const cosineSimilarity = (vecA, vecB) => {
-    const dotProduct = Object.keys(vecA).reduce((sum, key) => {
-        return sum + (vecA[key] * (vecB[key] || 0));
-    }, 0);
+// Fungsi untuk menghitung Euclidean Distance
+const euclideanDistance = (vecA, vecB) => {
+    const distance = Math.sqrt(Object.keys(vecA).reduce((sum, key) => {
+        const diff = (vecA[key] || 0) - (vecB[key] || 0);
+        return sum + diff * diff;
+    }, 0));
 
-    const magnitudeA = Math.sqrt(Object.values(vecA).reduce((sum, val) => sum + val * val, 0));
-    const magnitudeB = Math.sqrt(Object.values(vecB).reduce((sum, val) => sum + val * val, 0));
-
-    return dotProduct / (magnitudeA * magnitudeB);
+    return distance;
 };
 
 // Fungsi untuk mencari manhwa berdasarkan judul
@@ -90,32 +88,32 @@ const processedData = preproData.map(item => {
     };
 });
 
-// Fungsi utama untuk mendapatkan rekomendasi berdasarkan judul
-const getCosine = (inputTitle) => {
+// Fungsi utama untuk mendapatkan rekomendasi berdasarkan Euclidean Distance
+const getEuclidean = (inputTitle) => {
     const manhwa = findManhwaByTitle(inputTitle, processedData);
 
     if (manhwa) {
-        // Menghitung cosine similarity antara manhwa yang ditemukan dengan semua manhwa lainnya
-        const similarities = processedData.map(item => {
+        // Menghitung Euclidean Distance antara manhwa yang ditemukan dengan semua manhwa lainnya
+        const distances = processedData.map(item => {
             return {
                 id: item.id,
                 title: item.title,
-                similarity: cosineSimilarity(manhwa.tfidf, item.tfidf)
+                distance: euclideanDistance(manhwa.tfidf, item.tfidf)
             };
         });
 
-        // Mengurutkan berdasarkan nilai similarity tertinggi
-        similarities.sort((a, b) => b.similarity - a.similarity);
+        // Mengurutkan berdasarkan nilai distance terendah (semakin rendah, semakin mirip)
+        distances.sort((a, b) => a.distance - b.distance);
 
         // Mengambil 5 rekomendasi terbaik
-        const recommendations = similarities.slice(1, 6).map(item => {
+        const recommendations = distances.slice(1, 6).map(item => {
             const originalItem = originalData.find(dataItem => dataItem.id === item.id);
             return {
                 title: originalItem.title,
                 genres: originalItem.genres,
                 authors: originalItem.authors,
                 synopsis: originalItem.synopsis,
-                similarity: item.similarity.toFixed(4)
+                distance: item.distance.toFixed(4)
             };
         });
 
@@ -125,4 +123,4 @@ const getCosine = (inputTitle) => {
     }
 };
 
-module.exports = { getCosine };
+module.exports = { getEuclidean };
