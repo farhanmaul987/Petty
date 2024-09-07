@@ -57,25 +57,7 @@ const computeTFIDF = (tf, idf) => {
     return tfidf;
 };
 
-// Fungsi untuk menghitung Euclidean Distance
-const euclideanDistance = (vecA, vecB) => {
-    const distance = Math.sqrt(Object.keys(vecA).reduce((sum, key) => {
-        const diff = (vecA[key] || 0) - (vecB[key] || 0);
-        return sum + diff * diff;
-    }, 0));
-
-    return distance;
-};
-
-// Fungsi untuk mencari manhwa berdasarkan judul
-const findManhwaByTitle = (title, data) => {
-    return data.find(item => item.title.toLowerCase() === title.toLowerCase());
-};
-
-// Menghitung IDF untuk semua dokumen
 const idf = computeIDF(preproData);
-
-// Melakukan pre-processing dan menghitung TF-IDF untuk setiap item di dataset
 const processedData = preproData.map(item => {
     const tf = computeTF(item.array_data);
     const tfidf = computeTFIDF(tf, idf);
@@ -87,6 +69,20 @@ const processedData = preproData.map(item => {
         tfidf: tfidf
     };
 });
+
+const euclideanDistance = (vecA, vecB) => {
+    const distance = Math.sqrt(Object.keys(vecA).reduce((sum, key) => {
+        const diff = (vecA[key] || 0) - (vecB[key] || 0);
+        return sum + diff * diff;
+    }, 0));
+
+    return distance;
+};
+
+const findManhwaByTitle = (title, data) => {
+    return data.find(item => item.title.toLowerCase() === title.toLowerCase());
+};
+
 
 // Fungsi utama untuk mendapatkan rekomendasi berdasarkan Euclidean Distance
 const getEuclidean = (inputTitle) => {
@@ -118,8 +114,7 @@ const getEuclidean = (inputTitle) => {
         });
 
         return recommendations;
-    } else {
-        return null;
+
     }
 };
 

@@ -7,7 +7,6 @@
       "level",
       "finish",
       "action",
-      "adventur",
       "fantasi",
       "ten",
       "year",
@@ -87297,13 +87296,7 @@
   {
     "id": 1434,
     "title": "Bizarre Boy and Girl",
-    "array_data": [
-      "bizarr",
-      "boi",
-      "girl",
-      "finish",
-      "comedi"
-    ]
+    "array_data": ["bizarr", "boi", "girl", "finish", "comedi"]
   },
   {
     "id": 1435,
@@ -87399,16 +87392,7 @@
   {
     "id": 1437,
     "title": "And...",
-    "array_data": [
-      "finish",
-      "love",
-      "lee",
-      "shi",
-      "young",
-      "stori",
-      "art",
-      ""
-    ]
+    "array_data": ["finish", "love", "lee", "shi", "young", "stori", "art", ""]
   },
   {
     "id": 1438,
@@ -89857,10 +89841,7 @@
   {
     "id": 1502,
     "title": "I Can't Get!!",
-    "array_data": [
-      "finish",
-      "comedi"
-    ]
+    "array_data": ["finish", "comedi"]
   },
   {
     "id": 1503,
@@ -90208,16 +90189,7 @@
   {
     "id": 1510,
     "title": "Feeling",
-    "array_data": [
-      "feel",
-      "finish",
-      "romanc",
-      "hwang",
-      "mi",
-      "ri",
-      "stori",
-      ""
-    ]
+    "array_data": ["feel", "finish", "romanc", "hwang", "mi", "ri", "stori", ""]
   },
   {
     "id": 1511,
@@ -90860,15 +90832,7 @@
   {
     "id": 1529,
     "title": "I Know What He Is",
-    "array_data": [
-      "finish",
-      "comedi",
-      "jang",
-      "young",
-      "stori",
-      "art",
-      ""
-    ]
+    "array_data": ["finish", "comedi", "jang", "young", "stori", "art", ""]
   },
   {
     "id": 1530,
@@ -91594,12 +91558,7 @@
   {
     "id": 1549,
     "title": "Royal Love",
-    "array_data": [
-      "royal",
-      "love",
-      "publish",
-      "romanc"
-    ]
+    "array_data": ["royal", "love", "publish", "romanc"]
   },
   {
     "id": 1550,
@@ -95284,12 +95243,7 @@
   {
     "id": 1626,
     "title": "Is Your Dog Safe Now?",
-    "array_data": [
-      "dog",
-      "safe",
-      "finish",
-      "comedi"
-    ]
+    "array_data": ["dog", "safe", "finish", "comedi"]
   },
   {
     "id": 1627,
@@ -134079,15 +134033,7 @@
   {
     "id": 2309,
     "title": "Introvert",
-    "array_data": [
-      "introvert",
-      "publish",
-      "romanc",
-      "na",
-      "stori",
-      "art",
-      ""
-    ]
+    "array_data": ["introvert", "publish", "romanc", "na", "stori", "art", ""]
   },
   {
     "id": 2310,
@@ -141207,13 +141153,7 @@
   {
     "id": 2464,
     "title": "Nine Tales",
-    "array_data": [
-      "tale",
-      "publish",
-      "action",
-      "fantasi",
-      "supernatur"
-    ]
+    "array_data": ["tale", "publish", "action", "fantasi", "supernatur"]
   },
   {
     "id": 2465,
@@ -155283,15 +155223,7 @@
   {
     "id": 2724,
     "title": "Hellen",
-    "array_data": [
-      "hellen",
-      "finish",
-      "love",
-      "erotica",
-      "stori",
-      "art",
-      ""
-    ]
+    "array_data": ["hellen", "finish", "love", "erotica", "stori", "art", ""]
   },
   {
     "id": 2725,
@@ -159425,14 +159357,7 @@
   {
     "id": 2810,
     "title": "Second",
-    "array_data": [
-      "finish",
-      "erotica",
-      "nara",
-      "stori",
-      "art",
-      ""
-    ]
+    "array_data": ["finish", "erotica", "nara", "stori", "art", ""]
   },
   {
     "id": 2811,

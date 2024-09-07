@@ -7,29 +7,25 @@ const {
     ComponentType
 } = require("discord.js");
 
-const { stripIndents } = require("common-tags");
 const manhwa_data = require('../data/manhwa_mal.json');
-const { getCosine } = require('../algorithm/tfidf_cosine');
+const { getCosine } = require('../algorithm/cosine');
 const { getEuclidean } = require('../algorithm/euclidean');
+const { stripIndents } = require("common-tags");
 
 module.exports = {
     name: "find",
-    description: "Find Manhwa Recommendation",
+    description: "Temukan Rekomendasi Manhwa",
     options: [
         {
             name: "title",
-            description: "The name of the manhwa",
+            description: "Judul Manhwa",
             type: ApplicationCommandOptionType.String,
             required: true,
         },
     ],
-    // deleted: true,
 
     callback: async (client, interaction) => {
-        // try {
-        //     console.log("Received find command from user:", interaction.user.tag);
         const getTitle = interaction.options.getString("title");
-        // console.log("Searching for title:", getTitle);
         const manhwa = manhwa_data.find((m) => {
             const mTitle =
                 typeof m.title === "string"
@@ -41,9 +37,9 @@ module.exports = {
         if (!manhwa) {
             const notFound = new EmbedBuilder().setColor("#5500FF")
                 .setDescription(stripIndents`
-            Manhwa *${getTitle}* tidak ditemukan.
+            Manhwa **${getTitle}** tidak ditemukan.
             Data berdasarkan myanimelist awal tahun 2023.
-            Judul bisa saja berbeda dengan yang biasa didengar.
+            Judul bisa saja berbeda dengan yang biasa didengar, , silahkan cek myanimelist untuk judul yang lebih akurat.
             `);
             return interaction.reply({ embeds: [notFound] });
         }
@@ -84,7 +80,7 @@ module.exports = {
 
         const cosineMenu = new StringSelectMenuBuilder()
             .setCustomId(`${interaction.id}_cosine`)
-            .setPlaceholder("Pilih rekomendasi (Cosine Similarity)")
+            .setPlaceholder("Pilih Rekomendasi (Cosine Similarity)")
             .addOptions(
                 cosineResults.map(result =>
                     new StringSelectMenuOptionBuilder()
@@ -96,7 +92,7 @@ module.exports = {
 
         const euclideanMenu = new StringSelectMenuBuilder()
             .setCustomId(`${interaction.id}_euclidean`)
-            .setPlaceholder("Pilih rekomendasi (Euclidean Distance)")
+            .setPlaceholder("Pilih Rekomendasi (Euclidean Distance)")
             .addOptions(
                 euclideanResults.map(result =>
                     new StringSelectMenuOptionBuilder()
@@ -106,10 +102,10 @@ module.exports = {
                 )
             );
 
-        const row = new ActionRowBuilder().addComponents(cosineMenu);
-        const row2 = new ActionRowBuilder().addComponents(euclideanMenu);
+        const cos = new ActionRowBuilder().addComponents(cosineMenu);
+        const euc = new ActionRowBuilder().addComponents(euclideanMenu);
 
-        const reply = await interaction.reply({ embeds: [embed], components: [row, row2] });
+        const reply = await interaction.reply({ embeds: [embed], components: [cos, euc] });
 
         const collector = reply.createMessageComponentCollector({
             componentType: ComponentType.StringSelect,
@@ -127,10 +123,9 @@ module.exports = {
 
             const selectedManhwa = manhwa_data.find(m => m.title === selectedTitle);
 
-            if (selectedManhwa) {
-                const selectedEmbed = new EmbedBuilder()
-                    .setColor("#5500FF")
-                    .setTitle(selectedManhwa.title.toUpperCase()).setDescription(stripIndents`
+            const selectedEmbed = new EmbedBuilder()
+                .setColor("#5500FF")
+                .setTitle(selectedManhwa.title.toUpperCase()).setDescription(stripIndents`
                     _**(${selectedManhwa.genres})**_
 
                     ${selectedManhwa.synopsis}
@@ -139,15 +134,8 @@ module.exports = {
                     - ${selectedManhwa.authors}
                     `);
 
-                await i.reply({ embeds: [selectedEmbed], ephemeral: true });
-            } else {
-                await i.reply({ content: 'Informasi manhwa tidak ditemukan.', ephemeral: true });
-            }
+            await i.reply({ embeds: [selectedEmbed], ephemeral: true });
         });
-        // } catch (error) {
-        //     console.error("Error in find command:", error);
-        //     await interaction.reply({ content: 'There was an error processing your request.', ephemeral: true });
-        // }
     }
 
 };
