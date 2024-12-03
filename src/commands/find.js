@@ -13,12 +13,12 @@ const { getEuclidean } = require("../algorithm/euclidean");
 const { stripIndents } = require("common-tags");
 
 const manhwa_data = require("../data/manhwa_mal.json");
-const historyFilePath = path.join(__dirname, "../data/history.json");
+const history_data = path.join(__dirname, "../data/history.json");
 
 // Fungsi untuk membaca history.json
 const getUserHistory = (userId) => {
-  if (!fs.existsSync(historyFilePath)) return [];
-  const history = JSON.parse(fs.readFileSync(historyFilePath, "utf-8"));
+  if (!fs.existsSync(history_data)) return [];
+  const history = JSON.parse(fs.readFileSync(history_data, "utf-8"));
   return history[userId] || [];
 };
 
@@ -27,8 +27,8 @@ const saveHistory = (userId, title) => {
   let history = {};
 
   // Baca file history.json jika ada
-  if (fs.existsSync(historyFilePath)) {
-    history = JSON.parse(fs.readFileSync(historyFilePath, "utf-8"));
+  if (fs.existsSync(history_data)) {
+    history = JSON.parse(fs.readFileSync(history_data, "utf-8"));
   }
 
   // Tambahkan data baru
@@ -41,7 +41,7 @@ const saveHistory = (userId, title) => {
   }
 
   // Tulis kembali ke file
-  fs.writeFileSync(historyFilePath, JSON.stringify(history, null, 2));
+  fs.writeFileSync(history_data, JSON.stringify(history, null, 2));
 };
 
 module.exports = {
