@@ -15,23 +15,19 @@ const { stripIndents } = require("common-tags");
 const manhwa_data = require("../data/manhwa_mal.json");
 const history_data = path.join(__dirname, "../data/history.json");
 
-// Fungsi untuk membaca history.json
 const getUserHistory = (userId) => {
   if (!fs.existsSync(history_data)) return [];
   const history = JSON.parse(fs.readFileSync(history_data, "utf-8"));
   return history[userId] || [];
 };
 
-// Fungsi untuk menyimpan data riwayat
 const saveHistory = (userId, title) => {
   let history = {};
 
-  // Baca file history.json jika ada
   if (fs.existsSync(history_data)) {
     history = JSON.parse(fs.readFileSync(history_data, "utf-8"));
   }
 
-  // Tambahkan data baru
   const lowerCaseTitle = title.toLowerCase();
   if (!history[userId]) {
     history[userId] = [];
@@ -40,7 +36,6 @@ const saveHistory = (userId, title) => {
     history[userId].push(lowerCaseTitle);
   }
 
-  // Tulis kembali ke file
   fs.writeFileSync(history_data, JSON.stringify(history, null, 2));
 };
 
@@ -60,7 +55,6 @@ module.exports = {
     const getTitle = interaction.options.getString("title");
     const userId = interaction.user.id;
 
-    // Dapatkan riwayat pengguna
     const userHistory = getUserHistory(userId);
 
     const manhwa = manhwa_data.find((m) => {
@@ -81,10 +75,8 @@ module.exports = {
       return interaction.reply({ embeds: [notFound] });
     }
 
-    // Simpan riwayat pencarian hanya jika manhwa ditemukan
     saveHistory(userId, getTitle);
 
-    // Dapatkan rekomendasi
     const cosine = getCosine(getTitle);
     const euclidean = getEuclidean(getTitle);
 
@@ -99,7 +91,6 @@ module.exports = {
       return interaction.reply({ embeds: [noRecommendations] });
     }
 
-    // Filter rekomendasi untuk melewati judul yang sudah dicari sebelumnya
     const filterRecommendations = (recommendations) =>
       recommendations
         .filter((rec) => !userHistory.includes(rec.title.toLowerCase()))

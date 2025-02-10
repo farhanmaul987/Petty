@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 
-// Membaca dataset dari file hasil pre-processing
 const preproData = JSON.parse(
   fs.readFileSync(path.join(__dirname, "../data/prepro_manhwa.json"), "utf-8")
 );
@@ -90,7 +89,6 @@ const getEuclidean = (inputTitle) => {
   const manhwa = findManhwaByTitle(inputTitle, processedData);
 
   if (manhwa) {
-    // Menghitung Euclidean Distance antara manhwa yang ditemukan dengan semua manhwa lainnya
     const distances = processedData.map((item) => {
       return {
         id: item.id,
@@ -99,10 +97,8 @@ const getEuclidean = (inputTitle) => {
       };
     });
 
-    // Mengurutkan berdasarkan nilai distance terendah (semakin rendah, semakin mirip)
     distances.sort((a, b) => a.distance - b.distance);
 
-    // Mengambil 5 rekomendasi terbaik
     const recommendations = distances.slice(1, 6).map((item) => {
       const originalItem = originalData.find(
         (dataItem) => dataItem.id === item.id
